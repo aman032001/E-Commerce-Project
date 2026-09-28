@@ -1,8 +1,17 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { ShopContext } from '../context/ShopContext'
+import { useNavigate } from 'react-router-dom'
 
 export default function Card({data1}) {
-  return (
-    <div style={{
+    const { addToCart, wishlist, toggleWishlist } = useContext(ShopContext);
+    const navigate = useNavigate();
+
+    const isWishlisted = wishlist.some(item => item.id === data1.id);
+
+    return (
+    <div 
+    onClick={() => navigate(`/product/${data1.id}`)}
+    style={{
         display: "flex",
         flexDirection: "column",
         backgroundColor: "var(--surface)",
@@ -13,7 +22,8 @@ export default function Card({data1}) {
         border: "1px solid var(--border)",
         cursor: "pointer",
         height: "100%",
-        paddingBottom: "1rem"
+        paddingBottom: "1rem",
+        position: "relative"
     }}
     onMouseEnter={(e) => {
         e.currentTarget.style.transform = "translateY(-4px)";
@@ -23,6 +33,31 @@ export default function Card({data1}) {
         e.currentTarget.style.transform = "translateY(0)";
         e.currentTarget.style.boxShadow = "var(--shadow-sm)";
     }}>
+        {/* Wishlist Button */}
+        <button 
+            onClick={(e) => {
+                e.stopPropagation();
+                toggleWishlist(data1);
+            }}
+            style={{
+                position: 'absolute',
+                top: '0.75rem',
+                right: '0.75rem',
+                background: 'rgba(255, 255, 255, 0.8)',
+                border: 'none',
+                borderRadius: '50%',
+                width: '32px',
+                height: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                zIndex: 10,
+                boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+            }}
+        >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill={isWishlisted ? "#ef4444" : "none"} stroke={isWishlisted ? "#ef4444" : "#64748b"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        </button>
         <div style={{
             width: "100%",
             aspectRatio: "3/4",
@@ -30,11 +65,12 @@ export default function Card({data1}) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            overflow: "hidden"
+            overflow: "hidden",
+            padding: "1rem"
         }}>
             <img 
-                style={{width: "100%", height: "100%", objectFit: "cover"}} 
-                src={data1.image} 
+                style={{maxWidth: "100%", maxHeight: "100%", objectFit: "contain"}} 
+                src={data1.thumbnail || data1.image} 
                 alt={data1.title} 
             />
         </div>
@@ -48,9 +84,14 @@ export default function Card({data1}) {
             </h3>
             <div style={{ marginTop: "auto", display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "1rem" }}>
                 <span style={{ fontSize: "1.25rem", fontWeight: "700", color: "var(--text-main)" }}>
-                    ₹ {data1.price}
+                    ${data1.price}
                 </span>
-                <button style={{
+                <button 
+                onClick={(e) => {
+                    e.stopPropagation();
+                    addToCart(data1);
+                }}
+                style={{
                     padding: "0.5rem 1rem",
                     backgroundColor: "var(--primary)",
                     color: "white",
@@ -69,3 +110,4 @@ export default function Card({data1}) {
     </div>
   )
 }
+

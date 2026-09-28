@@ -6,11 +6,6 @@ export default function Carouseal({data}) {
     let timer = useRef(null)
 
     useEffect(() => {
-        setTimer()
-        return () => clearInterval(timer.current);
-    }, [curr])
-
-    function setTimer(){
         if(timer.current) clearInterval(timer.current);
         
         timer.current = setInterval(() => {
@@ -18,7 +13,9 @@ export default function Carouseal({data}) {
                 return prev >= images.length - 1 ? 0 : prev + 1
             })  
         }, 3000)
-    }
+
+        return () => clearInterval(timer.current);
+    }, [curr, images.length])
 
     function prev(){
         let val = curr <= 0 ? images.length - 1 : curr - 1
@@ -32,14 +29,13 @@ export default function Carouseal({data}) {
 
   return (
     <div style={{
-        width: "100%",
+        width: "100vw",
         height: "400px",
-        marginTop: "2rem",
+        margin: "0 calc(50% - 50vw)",
         marginBottom: "2rem",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: "var(--radius-lg)",
         overflow: "hidden",
         position: "relative",
         boxShadow: "var(--shadow-md)",
